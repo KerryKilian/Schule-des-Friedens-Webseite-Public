@@ -1,0 +1,63 @@
+@use "../_tools.scss" as tools;
+
+// .description {
+//     display: flex;
+//     flex-flow: row wrap;
+//     justify-content: space-evenly;
+//     align-items: center;
+// }
+
+// .description__figure, .description__text {
+//     flex: 0.5 0.2 50%;
+//     margin: var(--margin);
+// }
+
+.description {
+    padding: calc(var(--padding) * 3);
+    background-color: var(--background-color-one);
+}
+
+.description__layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20em, 1fr));
+    gap: 5%;
+    align-items: center;
+    justify-content: center;
+}
+
+.description__figure, .description__textcontainer {
+    display: flex;
+    justify-content: center;
+    margin: var(--margin);
+}
+
+.description__image {
+    align-items: flex-start;
+}
+
+.description__textcontainer {
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+
+
+.description__image {
+    width: var(--img-width);
+    max-width: 100%;
+    height: var(--img-height); 
+    object-fit: cover;
+}
+
+.description:nth-child(2n) {
+    .description__figure {
+        order: -1;
+    }
+    background-color: var(--background-color-two);
+    .description__textcontainer {
+        align-items: center;
+    }
+}
+
+
+

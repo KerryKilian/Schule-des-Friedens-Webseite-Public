@@ -1,0 +1,30 @@
+.itemlist {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.item {
+  position: relative;
+  flex: 0.8 0.2 60%;
+  margin: var(--margin);
+  padding: var(--padding);
+  background-color: var(--white-color);
+  transform: scale(1);
+  transition: all 0.4s ; 
+}
+
+.item:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+// .item > .item__title, .item > .item__subtitle, .item > .item__text {
+//     color: var(--secondary-color);
+//     transition: all 0.4s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+// }
+
+// .item:hover > .item__title, .item:hover > .item__subtitle, .item:hover > .item__text {
+//     color: var(--white-color);
+// } 

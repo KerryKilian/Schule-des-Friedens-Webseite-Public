@@ -1,0 +1,8 @@
+.footer {
+    background-color: var(--secondary-color);
+    padding: calc(2* var(--padding));
+}
+
+.footer__title, .footer__creator, .footer__site {
+    color: var(--white-color);
+}

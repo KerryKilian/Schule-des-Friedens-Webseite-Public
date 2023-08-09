@@ -1,0 +1,9 @@
+@media screen and (max-width: 500px) {
+    h1 {
+        font-size: var(--fontsize-h2);
+    }
+}
+
+.text {
+    margin: calc(var(--margin)* 2);
+}

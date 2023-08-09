@@ -1,0 +1,27 @@
+@use "./_tools.scss" as tools;
+
+.rounded {
+    border-radius: var(--border-radius);
+    border: none;
+}
+
+.row {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.rowchild {
+    flex: 1 0.5 25rem;
+    max-width: 95%;
+}
+
+.grid {
+    @include tools.grid-repeat-columns(auto-fit, 10em, 15em); // 10em 20em 
+}
+
+@media screen and (min-width: 1000px ) {
+    .grid {
+        width: 90%;
+        @include tools.grid-repeat-columns(auto-fit, 10em, 20em); // 10em 20em 
+    }
+}

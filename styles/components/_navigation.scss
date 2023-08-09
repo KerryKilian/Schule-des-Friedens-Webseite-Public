@@ -1,0 +1,78 @@
+@use "../_tools.scss" as tools;
+
+// navigation fixed on wide screens
+.navigation {
+  // @media (min-width: 45em) {
+  //   position: sticky;
+  //   top: 0;
+  //   z-index: 10;
+  // }
+  top: 0;
+  z-index: 10;
+}
+
+.navigation {
+  background: var(--secondary-color);
+  padding-left: var(--padding);
+  padding-right: var(--padding);
+  width: 100%;
+}
+
+a:-webkit-any-link {
+  color: var(--white-color);
+}
+
+.navigation__ul {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: space-around;
+  list-style: none;
+  text-decoration: none;
+  margin: 0;
+}
+
+.navigation__ul li:not(:first-child) > .navigation__link {
+  padding: var(--padding);
+  margin: var(--margin);
+}
+
+.navigation__ul li:first-child {
+  margin: var(--margin);
+}
+
+.navigation__image {
+  width: 100%;
+  height: auto;
+  max-height: 3em;
+  object-fit: contain;
+}
+
+.navigation__icon {
+  display: none;
+  float: right;
+  margin: var(--margin);
+}
+
+
+@media (max-width: 600px) {
+  .isClosed.navigation {
+    display: none;
+  }
+
+  .navigation__icon {
+    display: block;
+  }
+
+  .isOpen.navigation {
+    padding: var(--padding);
+  }
+
+  .isOpen.navigation > .navigation__ul {
+    display: grid;
+    grid-template-columns: 1fr; /* One item per row */
+    gap: calc(var(--margin) * 2); /* Adjust the gap between items as needed */
+    justify-items: right;
+  }
+}
+

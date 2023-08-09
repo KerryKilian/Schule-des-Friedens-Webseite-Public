@@ -1,0 +1,20 @@
+.navigation__link {
+  background-color: var(--secondary-color);
+  color: var(--white-color);
+  transition: all 0.3s ease;
+
+}
+
+.navigation__link:hover {
+  color: var(--secondary-color);
+  background-color: var(--background-color-one);
+}
+
+.navigation__li {
+  transform: scale(1);
+  transition: all 0.3s ease;
+}
+
+.navigation__li:hover {
+  transform: scale(1.2);
+}

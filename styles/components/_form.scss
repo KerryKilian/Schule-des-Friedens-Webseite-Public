@@ -1,0 +1,79 @@
+.contact {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+
+.form {
+    margin: var(--margin);
+}
+
+.form__layout {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.question {
+    margin: var(--margin);
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.question__input {
+    padding: var(--padding);
+    border-width: 0;
+    border-radius: var(--border-radius);
+    max-width: 100%;
+}
+
+.question__inputlong {
+    flex: 1;
+}
+
+.question__message {
+    width: 100%;
+    max-width: 50em;
+    resize: none;
+}
+
+.question__label {
+    margin: var(--margin);
+}
+
+.question__button {
+    border: 0;
+    border-radius: var(--border-radius);
+    margin: var(--margin);
+    padding: var(--padding);
+    cursor: pointer;
+}
+
+.accept {
+    background-color: var(--accept-color);
+    color: var(--white-color);
+}
+
+
+.fileinput__container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(5em, 20em));
+    gap: var(--margin);
+    justify-content: center;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.fileinput__label {
+    display: block;
+    cursor: pointer;
+    background-color: var(--secondary-color);
+    color: white;
+    margin-top: var(--margin);
+}
+
+.fileinput__img {
+    margin: var(--margin);
+    margin-top: calc(var(--margin)*2);
+}

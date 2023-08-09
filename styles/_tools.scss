@@ -1,0 +1,14 @@
+@mixin flex($directions: row, $wrap: wrap, $justify: center, $align: center) {
+  display: flex;
+  flex-wrap: $wrap;
+  flex-direction: $directions;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+
+@mixin grid-repeat-columns($repeat: auto-fit, $min: 15em, $max: 1fr) {
+  display: grid;
+  grid-template-columns: repeat($repeat, minmax($min, $max));
+}
+  
