@@ -1,15 +1,18 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import nodemailer from 'nodemailer';
+import { NextApiRequest, NextApiResponse } from "next";
+import nodemailer from "nodemailer";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (req.method !== "POST") {
     return res.status(405).end(); // Method Not Allowed
   }
 
   try {
     // Replace the following values with your actual email credentials and settings
     const transporter = nodemailer.createTransport({
-      host: 'smtp.web.de',
+      host: "smtp.web.de",
       port: 587,
       secure: false,
       auth: {
@@ -22,16 +25,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const mailOptions = {
       from: process.env.NEXT_PUBLIC_EMAIL_ADDRESS,
-      to: process.env.NEXT_PUBLIC_EMAIL_ADDRESS_RECEVIER,
-      subject: 'Neue Anfrage von der Webseite',
+      to: process.env.NEXT_PUBLIC_EMAIL_ADDRESS_RECEIVER,
+      subject: "Neue Anfrage von der Webseite",
       text: `Name: ${name}\nTelefon: ${telephone}\nEmail: ${email}\nNachricht: ${message}`,
     };
 
     await transporter.sendMail(mailOptions);
 
-    return res.status(200).json({ message: 'Email sent successfully' });
+    return res.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Failed to send email' });
+    return res.status(500).json({ message: "Failed to send email" });
   }
 }

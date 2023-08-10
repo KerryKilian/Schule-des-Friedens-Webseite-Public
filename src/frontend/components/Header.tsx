@@ -112,11 +112,14 @@ export default function Header() {
               Kontakt
             </Link>
           </li>
-          <li className="navigation__li rounded">
-            <Link href="/intern" className="navigation__link rounded">
-              Intern
-            </Link>
-          </li>
+          {loginInfo && (
+            <li className="navigation__li rounded">
+              <Link href="/intern" className="navigation__link rounded">
+                Intern
+              </Link>
+            </li>
+          )}
+
           <li className="navigation__li rounded">
             {loginInfo ? (
               <div
