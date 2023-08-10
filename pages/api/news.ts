@@ -4,25 +4,124 @@ import { addDoc, collection } from "firebase/firestore";
 import { MongoClient } from "mongodb";
 import multer from "multer";
 import { NextApiRequest, NextApiResponse } from "next";
+import { body, validationResult } from "express-validator";
+import isURL from "is-url";
 
-
-async function add(req: any, res: any) {
+export default async function news(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
-    try {
-        const news: NewsResource = req.body;
-        const result = addDoc(collection(db, "news"), news);
+    // validation
+    await Promise.all([
+      body("title")
+        .exists()
+        .withMessage("Title is required.")
+        .isLength({ max: 100, min: 5 })
+        .withMessage("Title must have min 5 and max 100 characters.")
+        .custom((value) => !value.includes("<") && !value.includes(">"))
+        .withMessage(
+          "It seems you tried to insert harmful code. You are now banned from requesting this api."
+        )
+        .run(req),
 
-        res.status(201).json({ message: "OK", result: result });
-      
-    } catch (error) {
-      console.error('An error occurred:', error);
-      return res.status(500).json({ message: 'Internal server error' });
+      body("subtitle")
+        .exists()
+        .withMessage("Subtitle is required.")
+        .isLength({ max: 100, min: 5 })
+        .withMessage("Subtitle must have min 5 and max 100 characters.")
+        .custom((value) => !value.includes("<") && !value.includes(">"))
+        .withMessage(
+          "It seems you tried to insert harmful code. You are now banned from requesting this api."
+        )
+        .run(req),
+
+      body("authorName")
+        .exists()
+        .withMessage("AuthorName is required.")
+        .isLength({ max: 100, min: 5 })
+        .withMessage("AuthorName must have min 5 and max 100 characters.")
+        .custom((value) => !value.includes("<") && !value.includes(">"))
+        .withMessage(
+          "It seems you tried to insert harmful code. You are now banned from requesting this api."
+        )
+        .run(req),
+
+      body("text")
+        .exists()
+        .withMessage("Text is required.")
+        .isLength({ max: 15000, min: 5 })
+        .withMessage("Text must have at most 15000 characters.")
+        .custom((value) => !value.includes("<") && !value.includes(">"))
+        .withMessage(
+          "It seems you tried to insert harmful code. You are now banned from requesting this api."
+        )
+        .run(req),
+      body("images")
+        .exists()
+        .isArray()
+        .withMessage("Images array is required, even tho it can be empty.")
+        .custom((images) => {
+          // Validate each item in the array
+          for (const image of images) {
+            if (!isURL(image)) {
+              return false;
+            }
+          }
+          return true;
+        })
+        .withMessage("Each image must be a valid URL.")
+        .run(req),
+    ]);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
-  } else if (req.method === "GET") {
 
-    res
-      .status(200)
-  } 
+    // insert data
+    let news: NewsResource | null = null;
+    let result;
+    try {
+      news = req.body as NewsResource;
+    } catch (error: any) {
+      return res.status(400).send({
+        errors: [
+          {
+            location: "body",
+            msg: "Wrong or missing information for resource 'news'",
+            path: "",
+            type: "field",
+            value: "",
+          },
+        ],
+      });
+    }
+
+    try {
+      result = await addDoc(collection(db, "news"), news);
+    } catch (errer: any) {
+      return res.status(500).send({
+        errors: [
+          {
+            location: "connection",
+            msg: "Error occured while trying to insert data to database.",
+            path: "",
+            type: "",
+            value: "",
+          },
+        ],
+      });
+    }
+
+    res.status(200).json({ result: result });
+  } else {
+    return res.status(405).send({
+      errors: [
+        {
+          location: "connection",
+          msg: "This method is not allowed",
+          path: "",
+          type: "",
+          value: "",
+        },
+      ],
+    });
+  }
 }
-
-export default add;
