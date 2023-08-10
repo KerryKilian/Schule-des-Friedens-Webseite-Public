@@ -2,20 +2,38 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { BsList } from "react-icons/bs";
+import { useLoginContext } from "../LoginContext";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const { loginInfo, setLoginInfo } = useLoginContext();
+
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  const toggleForm = () => {
+    setIsFormOpen(!isFormOpen);
+  };
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
   return (
     <>
-    <BsList className="navigation__icon" size={24} onClick={toggleMenu}></BsList>
-      <nav className={`navigation ${isOpen ? "isOpen" : "isClosed"}`} id="navigation">
-        <ul className={`navigation__ul ${isOpen ? 'open' : ''}`}>
+      <BsList
+        className="navigation__icon"
+        size={24}
+        onClick={toggleMenu}
+      ></BsList>
+      <nav
+        className={`navigation ${isOpen ? "isOpen" : "isClosed"}`}
+        id="navigation"
+      >
+        <ul className={`navigation__ul ${isOpen ? "open" : ""}`}>
           <li className="navigation__li rounded">
-            <Link className="navigation__link" href="https://www.santegidio.org/">
+            <Link
+              className="navigation__link"
+              href="https://www.santegidio.org/"
+            >
               <Image
                 src={`/images/santegidio.jpg`}
                 alt="Logo"
@@ -32,33 +50,67 @@ export default function Header() {
           </li>
           <li className="navigation__li rounded">
             <Link href="/kinder" className="navigation__link rounded">
-            Kinder
+              Kinder
             </Link>
           </li>
           <li className="navigation__li rounded">
             <Link href="/jugendliche" className="navigation__link rounded">
-            Jugendliche
+              Jugendliche
             </Link>
           </li>
           <li className="navigation__li rounded">
             <Link href="/aktuelles" className="navigation__link rounded">
-            Aktuelles
+              Aktuelles
             </Link>
           </li>
           <li className="navigation__li rounded">
             <Link href="/kontakt" className="navigation__link rounded">
-            Kontakt
+              Kontakt
             </Link>
           </li>
           <li className="navigation__li rounded">
             <Link href="/intern" className="navigation__link rounded">
-            Intern
+              Intern
             </Link>
           </li>
+          <li className="navigation__li rounded">
+            <div className="navigation__link rounded" onClick={toggleForm}>
+              Login
+            </div>
+          </li>
         </ul>
-        
       </nav>
-      
+      {isFormOpen && (
+        <div className="login__overlay">
+          <div className="login__container">
+            <div className="centered-form">
+              <h3 className="login__title">Login</h3>
+              <p className="login__description">
+                Melde dich an, um auf interne Informationen zugreifen zu können.
+              </p>
+              <form className="form">
+                <div className="form__layout">
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    className="question__input margin"
+                  />
+                </div>
+                <button type="submit" className="question__button accept">
+                  Login
+                </button>
+                <button
+                  type="button"
+                  onClick={toggleForm}
+                  className="question__button"
+                >
+                  Abbrechen
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

@@ -1,25 +1,29 @@
 .rounded {
-    border-radius: var(--border-radius);
+  border-radius: var(--border-radius);
 }
 
 .margin {
-    margin: var(--margin);
+  margin: var(--margin);
 }
 
 .hoveranimationbig {
-    scale: 1;
-    transition: all 0.3s ease;
+  scale: 1;
+  transition: all 0.3s ease;
 }
 
 .hoveranimationbig:hover {
-    scale: 1.2;
+  scale: 1.2;
 }
 
 .hoveranimationsmall {
-    scale: 1;
-    transition: all 0.3s ease;
+  scale: 1;
+  transition: all 0.3s ease;
 }
 
 .hoveranimationsmall:hover {
-    scale: 1.01;
+  scale: 1.01;
+}
+
+.white {
+  color: var(--white-color);
 }
