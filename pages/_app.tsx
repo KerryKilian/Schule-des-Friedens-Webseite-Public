@@ -11,11 +11,14 @@ import Footer from "@/src/frontend/components/Footer";
 export default function App({ Component, pageProps }: AppProps) {
   // get localStorage must be in useEffect
   useEffect(() => {
-    const jwtToken = localStorage.getItem("jwt");
-    if (jwtToken) {
-      setLoginInfo(getLoginInfoFromJWT(jwtToken));
+    try {
+      const jwtToken = localStorage.getItem("jwt");
+      if (jwtToken) {
+        setLoginInfo(getLoginInfoFromJWT(jwtToken));
+      }
+    } catch (err) {
+      console.log(err);
     }
-    console.log(jwtToken);
   }, []);
 
   const [loginInfo, setLoginInfo] = useState<{ ip: string } | null>(null);

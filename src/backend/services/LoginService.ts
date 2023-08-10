@@ -6,6 +6,8 @@ export async function verifyPasswordAndCreateJWT(
   ip: string,
   password: string
 ): Promise<string | undefined> {
+  console.log(password);
+
   if (!ip || !password) {
     throw new Error("ip and password must be set");
   }
@@ -37,7 +39,7 @@ export async function verifyPasswordAndCreateJWT(
 }
 
 export function verifyJWT(jwtString: string | undefined): {
-  ip: string
+  ip: string;
 } {
   if (!jwtString) {
     throw new Error("jwtString not set");
@@ -59,30 +61,26 @@ export function verifyJWT(jwtString: string | undefined): {
   };
 }
 
-
-
 export async function login(
-    password: string,
-    ip: string,
-  ): Promise<{ success: boolean; ip?: string }> {
-    if (!password) {
-      return {
-        success: false,
-      };
-    }
-
-  // Password: schule@frieden-2023!
-
-    if (password === `${process.env.PASSWORD_ENCODED}`) {
-      return {
-        success: true,
-        ip: ip,
-      };
-    }
-
+  password: string,
+  ip: string
+): Promise<{ success: boolean; ip?: string }> {
+  if (!password) {
     return {
       success: false,
     };
-    
   }
-  
+
+  // Password: schule@frieden-2023!
+
+  if (password === `${process.env.PASSWORD}`) {
+    return {
+      success: true,
+      ip: ip,
+    };
+  }
+
+  return {
+    success: false,
+  };
+}

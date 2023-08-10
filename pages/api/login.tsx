@@ -3,24 +3,43 @@ import { verifyPasswordAndCreateJWT } from "@/src/backend/services/LoginService"
 import { NextApiRequest, NextApiResponse } from "next";
 
 async function login(req: NextApiRequest, res: NextApiResponse) {
-    const email = req.body.email;
-    const password = req.body.password;
-  
-      try {
-          const jwtTokenString = await verifyPasswordAndCreateJWT(email, password);
-          if (jwtTokenString) {
-              const loginResource: LoginResource = {
-                  access_token: jwtTokenString,
-                  token_type: "Bearer"
-              }
-              res.status(200)
-                  .send(loginResource);
-              return;
-          }
-      } catch {
-          res.status(400)
-      }
-      res.status(400)
+  const request = JSON.parse(req.body);
+  const password = request.password;
+  let ip;
+  try {
+    const ipifyResponse = await fetch("https://api6.ipify.org?format=json");
+    const ipifyData = await ipifyResponse.json();
+    ip = ipifyData.ip; // IPv6
+  } catch (error) {
+    return res.status(500).send({
+      errors: [
+        {
+          location: "connection",
+          msg: "Error occured while trying to get ip address.",
+          path: "",
+          type: "",
+          value: "",
+        },
+      ],
+    });
+  }
+
+  try {
+    const jwtTokenString = await verifyPasswordAndCreateJWT(ip, password);
+    res.status(200).send({ jwtTokenString });
+    if (jwtTokenString) {
+      const loginResource: LoginResource = {
+        access_token: jwtTokenString,
+        token_type: "Bearer",
+      };
+      return res.status(200).send(loginResource);
+    } else {
+      res.status(401).end();
+    }
+  } catch (error) {
+    res.status(400).send({ error });
+  }
+  res.status(400);
 }
 
 export default login;

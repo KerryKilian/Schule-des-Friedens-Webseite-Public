@@ -1,12 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsList } from "react-icons/bs";
 import { useLoginContext } from "../LoginContext";
+import { getLoginInfoFromJWT, removeJWT, storeJWT } from "../JWTManager";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const { loginInfo, setLoginInfo } = useLoginContext();
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
 
   const [isFormOpen, setIsFormOpen] = useState(false);
 
@@ -17,6 +20,47 @@ export default function Header() {
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
+  /**
+   * logs the user in. if successful, the jwt will be saved in local storage and
+   * the ip adress will be saved in loginInfo.
+   * @param e React.FormEvent
+   */
+  const doLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        body: JSON.stringify({ password: password }),
+      });
+      const result = await response.json();
+      const jwt = result.jwtTokenString;
+
+      if (jwt) {
+        // store JWT in local storage
+        storeJWT(jwt);
+        // sync react state
+        const loginInfo = getLoginInfoFromJWT(jwt);
+        setLoginInfo(loginInfo);
+        toggleForm();
+      } else {
+        setMessage("Login fehlgeschlagen");
+      }
+    } catch (err) {
+      console.log(err);
+      setMessage(String(err));
+    }
+    // finally {
+    //   setPassword("");
+    // }
+  };
+
+  const doLogout = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginInfo(null);
+    removeJWT();
+  };
+
   return (
     <>
       <BsList
@@ -74,9 +118,18 @@ export default function Header() {
             </Link>
           </li>
           <li className="navigation__li rounded">
-            <div className="navigation__link rounded" onClick={toggleForm}>
-              Login
-            </div>
+            {loginInfo ? (
+              <div
+                className="navigation__link rounded"
+                onClick={(e) => doLogout(e)}
+              >
+                Logout
+              </div>
+            ) : (
+              <div className="navigation__link rounded" onClick={toggleForm}>
+                Login
+              </div>
+            )}
           </li>
         </ul>
       </nav>
@@ -88,12 +141,14 @@ export default function Header() {
               <p className="login__description">
                 Melde dich an, um auf interne Informationen zugreifen zu können.
               </p>
-              <form className="form">
+              <form className="form" onSubmit={(e) => doLogin(e)}>
                 <div className="form__layout">
                   <input
                     type="password"
                     placeholder="Password"
                     className="question__input margin"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
                 <button type="submit" className="question__button accept">
