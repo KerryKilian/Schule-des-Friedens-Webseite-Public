@@ -12,7 +12,7 @@ export type NewsResource = {
   text: string;
   authorName: string;
   authorIP?: string;
-  images?: string[];
+  images: string[];
   createdAt?: Date;
 };
 

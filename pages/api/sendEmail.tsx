@@ -10,7 +10,6 @@ export default async function handler(
   }
 
   try {
-    // Replace the following values with your actual email credentials and settings
     const transporter = nodemailer.createTransport({
       host: "smtp.web.de",
       port: 587,

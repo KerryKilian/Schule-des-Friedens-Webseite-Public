@@ -1,6 +1,6 @@
 import { db } from "@/firebase";
 import { NewsResource } from "@/src/Resources";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, setDoc } from "firebase/firestore";
 import { MongoClient } from "mongodb";
 import multer from "multer";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -95,7 +95,11 @@ export default async function news(req: NextApiRequest, res: NextApiResponse) {
     }
 
     try {
-      result = await addDoc(collection(db, "news"), news);
+      // result = await addDoc(collection(db, "news"), news);
+
+      // instead of just inserting data, I will insert the document id as a field (for searching)
+      const newsRef = doc(collection(db, "news"));
+      await setDoc(newsRef, { ...news, id: newsRef.id, createdAt: new Date() });
     } catch (errer: any) {
       return res.status(500).send({
         errors: [
@@ -111,6 +115,27 @@ export default async function news(req: NextApiRequest, res: NextApiResponse) {
     }
 
     res.status(200).json({ result: result });
+  } else if (req.method === "GET") {
+    try {
+      const querySnapshot = await getDocs(collection(db, "news"));
+      const fetchedItems = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      res.status(200).send(fetchedItems);
+    } catch (error) {
+      return res.status(405).send({
+        errors: [
+          {
+            location: "connection",
+            msg: "An error occured while trying to fetch data from database",
+            path: "",
+            type: "",
+            value: "",
+          },
+        ],
+      });
+    }
   } else {
     return res.status(405).send({
       errors: [

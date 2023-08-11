@@ -292,13 +292,24 @@ a:-webkit-any-link {
 }
 
 .item {
-  position: relative;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
   flex: 0.8 0.2 60%;
   margin: var(--margin);
   padding: var(--padding);
   background-color: var(--white-color);
   transform: scale(1);
   transition: all 0.4s;
+}
+
+.item__textcontainer {
+  flex: 1 0.2 20em;
+}
+
+.item__image {
+  flex: 1 0.2 10em;
 }
 
 .item:hover {
