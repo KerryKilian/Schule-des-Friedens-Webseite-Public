@@ -1,5 +1,8 @@
 import * as dotenv from "dotenv";
+import { NextFunction } from "express";
 import { JwtPayload, sign, verify } from "jsonwebtoken";
+import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 dotenv.config();
 
 export async function verifyPasswordAndCreateJWT(
@@ -83,4 +86,33 @@ export async function login(
   return {
     success: false,
   };
+}
+
+
+export async function requiresAuthentication(req: NextApiRequest, res: NextApiResponse): Promise<string | null> {
+  console.log("in requiresAuthentication")
+  const auth = req.headers["authorization"]
+  console.log(req);
+  if (auth && (auth as string).startsWith("Bearer ")) {
+    console.log("in if: " + auth)
+      try {
+          const jwtString = (auth as string).substring("Bearer ".length);
+          if (!jwtString) {
+              res.status(401).end;
+              // next("Verification failed");
+          }
+          const info = verifyJWT(jwtString);
+          return info.ip;
+          // next();
+      } catch (err) {
+          res.status(401).end();
+          // next(err)
+      }
+  } else {
+      // not logged in
+      res.status(401).end();
+      // next("Verification failed");
+  }
+  return null;
+
 }

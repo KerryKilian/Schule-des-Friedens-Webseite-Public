@@ -7,6 +7,8 @@ import { useState, ChangeEvent } from "react";
 import { Progress } from "react-sweet-progress";
 import "react-sweet-progress/lib/style.css";
 import { ValidationErrors } from "../../Resources";
+import BounceLoader from "react-spinners/BounceLoader";
+import { retrieveJWT } from "../JWTManager";
 
 export default function AddNews() {
   const [errors, setErrors] = useState<ValidationErrors>();
@@ -25,6 +27,7 @@ export default function AddNews() {
     images: [],
   });
   const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (
     event:
@@ -42,17 +45,22 @@ export default function AddNews() {
   async function send(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
+    setLoading(true);
+    const headers: any = {
+      "Content-Type": "application/json"
+    }
+    const jwt = retrieveJWT();
+    
+    if (jwt) {
+        headers.Authorization = `Bearer ${jwt}`;
+    }
     try {
       const response = await fetch("/api/news", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: headers,
         body: JSON.stringify(news),
       });
       const result = await response.json();
-      console.log(result);
-      console.log(response.ok);
       if (response.ok) {
         setSuccessMessage("Artikel erfolgreich hinzugefügt");
       } else {
@@ -60,8 +68,9 @@ export default function AddNews() {
         setErrors(result);
       }
     } catch (error) {
-      console.error("Ein Fehler ist aufgetreten: ", error);
+      setSuccessMessage("Ein Fehler ist aufgetreten: " + error);
     }
+    setLoading(false)
   }
 
   /**
@@ -198,6 +207,14 @@ export default function AddNews() {
           className="question__button accept hoveranimationbig"
         />
         <br />
+        <BounceLoader
+          color={"#202c64"}
+          loading={loading}
+          // cssOverride={override}
+          size={150}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+      />
         <small>{successMessage}</small>
         {errors?.errors.map((error) => (
           <>
@@ -206,7 +223,7 @@ export default function AddNews() {
           </>
         ))}
       </form>
-      <button onClick={(e) => console.log(news)}>Klick mihc</button>
+      <button onClick={(e) => {console.log(news); console.log("jwt: " + retrieveJWT());}}>Klick mihc</button>
     </>
   );
 }

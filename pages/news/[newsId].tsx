@@ -4,6 +4,7 @@ import { db } from "../../firebase";
 import { collection, getDoc, getDocs, query, where } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { NewsResource } from "@/src/Resources";
+import { formatDate } from "@/src/utils/utils";
 
 type NewsDetailProps = {
   news: NewsResource;
@@ -15,7 +16,7 @@ const ItemDetailPage = ({ news }: NewsDetailProps) => {
       <h1>{news.title}</h1>
       <p className="">
         <em>
-          Geschrieben von {news.authorName} am {news.createdAt?.toDateString()}
+          Geschrieben von {news.authorName} am {formatDate(news.createdAt!)}
         </em>
         <br></br>
         {news.text}

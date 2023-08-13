@@ -1,4 +1,5 @@
 import { NewsResource } from "@/src/Resources";
+import { formatDate, truncateText } from "@/src/utils/utils";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -6,13 +7,11 @@ interface Props {
   news: NewsResource;
 }
 
-const truncateText = (text: string): string => {
-  const truncatedText = text.slice(0, 100);
-  return truncatedText;
-};
+
 
 export default function NewsListItem({ news }: Props) {
   const truncatedText = truncateText(news.text);
+
 
   return (
     <Link href={`/news/${news.id}`}>
@@ -24,7 +23,7 @@ export default function NewsListItem({ news }: Props) {
             {truncatedText}...<br></br>
             <em>
               Geschrieben von {news.authorName} am{" "}
-              {news.createdAt?.toDateString()}
+              {formatDate(news.createdAt!)}
             </em>
           </p>
         </div>

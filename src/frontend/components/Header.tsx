@@ -34,6 +34,7 @@ export default function Header() {
         body: JSON.stringify({ password: password }),
       });
       const result = await response.json();
+      console.log(result);
       const jwt = result.jwtTokenString;
 
       if (jwt) {

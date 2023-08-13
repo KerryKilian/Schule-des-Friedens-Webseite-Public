@@ -6,9 +6,14 @@ import multer from "multer";
 import { NextApiRequest, NextApiResponse } from "next";
 import { body, validationResult } from "express-validator";
 import isURL from "is-url";
+import { requiresAuthentication } from "@/src/backend/services/LoginService";
 
 export default async function news(req: NextApiRequest, res: NextApiResponse) {
+  const ip = await requiresAuthentication(req, res);
   if (req.method === "POST") {
+    if (ip == null && ip == "") {
+      return;
+    }
     // validation
     await Promise.all([
       body("title")

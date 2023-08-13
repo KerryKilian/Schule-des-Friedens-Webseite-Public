@@ -13,7 +13,7 @@ export type NewsResource = {
   authorName: string;
   authorIP?: string;
   images: string[];
-  createdAt?: Date;
+  createdAt?: Date | any;
 };
 
 export type ContactForm = {

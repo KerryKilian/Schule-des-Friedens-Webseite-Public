@@ -18,6 +18,8 @@ const NewsPage: NextPage<{ newsList: NewsResource[] }> = ({ newsList }) => {
 export default NewsPage;
 
 export const getServerSideProps: GetServerSideProps = async () => {
+
+  
   try {
     let url: string;
     if (process.env.PRODUCTION === "TRUE") {
@@ -27,7 +29,13 @@ export const getServerSideProps: GetServerSideProps = async () => {
     }
     const response = await fetch(url);
     const data: NewsResource[] = await response.json();
-    console.log(data);
+    console.log(data[0].createdAt);
+    // Convert Firestore Timestamps to JavaScript Date objects
+    // const newsList = data.map((news: { createdAt: { toDate: () => any; }; }) => ({
+    //   ...news,
+    //   createdAt: news.createdAt ? news.createdAt.toDate() : null,
+    // }));
+    
 
     return {
       props: { newsList: data }, // Use "newsList" as the key
