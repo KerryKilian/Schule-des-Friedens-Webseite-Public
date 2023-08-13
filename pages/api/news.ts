@@ -9,8 +9,9 @@ import isURL from "is-url";
 import { requiresAuthentication } from "@/src/backend/services/LoginService";
 
 export default async function news(req: NextApiRequest, res: NextApiResponse) {
-  const ip = await requiresAuthentication(req, res);
+  
   if (req.method === "POST") {
+    const ip = await requiresAuthentication(req, res);
     if (ip == null && ip == "") {
       return;
     }
@@ -104,7 +105,7 @@ export default async function news(req: NextApiRequest, res: NextApiResponse) {
 
       // instead of just inserting data, I will insert the document id as a field (for searching)
       const newsRef = doc(collection(db, "news"));
-      await setDoc(newsRef, { ...news, id: newsRef.id, createdAt: new Date() });
+      await setDoc(newsRef, { ...news, id: newsRef.id, createdAt: new Date(), authorIp: req.headers['x-forwarded-for'] || req.connection.remoteAddress });
     } catch (errer: any) {
       return res.status(500).send({
         errors: [
