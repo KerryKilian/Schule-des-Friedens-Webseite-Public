@@ -1,6 +1,7 @@
 import { db } from "@/firebase";
 import { NextFunction } from "express";
 import {
+  Timestamp,
   addDoc,
   collection,
   doc,
@@ -47,3 +48,39 @@ export const checkIp = async (
   // ip is not saved in database
   return false;
 };
+
+/**
+ *
+ * @param req
+ * @param res
+ * @param action
+ * @returns true, if more than 5 request in the last 10 minutes, false if not
+ */
+export async function checkBruteForce(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  action: string
+): Promise<boolean> {
+  const ip = (req.headers["x-forwarded-for"] ||
+    req.connection.remoteAddress) as string;
+  const currentTime = Timestamp.now();
+  const tenMinutesAgo = new Timestamp(
+    currentTime.seconds - 600,
+    currentTime.nanoseconds
+  );
+  const q = query(
+    collection(db, "log"),
+    where("ip", "==", ip),
+    where("timestamp", ">", tenMinutesAgo)
+  );
+
+  const querySnapshot = await getDocs(q);
+  const requestCount = querySnapshot.size;
+
+  // More than 5 requests from the same IP in the last 10 minutes
+  if (requestCount > 5) {
+    return true;
+  } else {
+    return false;
+  }
+}

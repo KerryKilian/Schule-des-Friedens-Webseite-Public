@@ -7,10 +7,13 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { body, validationResult } from "express-validator";
 import isURL from "is-url";
 import { requiresAuthentication } from "@/src/backend/services/LoginService";
-import { banIp, checkIp } from "@/src/backend/services/Ip";
+import { banIp, checkBruteForce, checkIp } from "@/src/backend/services/Ip";
+import { logAction } from "@/src/backend/services/Logging";
 
 export default async function news(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
+    const action = "add-news";
+    await logAction(req, action);
     const ip = await requiresAuthentication(req, res);
     if (ip == null && ip == "") {
       return;
@@ -23,6 +26,21 @@ export default async function news(req: NextApiRequest, res: NextApiResponse) {
           {
             location: "request",
             msg: "You are banned from this api.",
+            path: "",
+            type: "field",
+            value: "",
+          },
+        ],
+      });
+    }
+
+    const bruteForce = await checkBruteForce(req, res, action);
+    if (bruteForce) {
+      return res.status(401).send({
+        errors: [
+          {
+            location: "request",
+            msg: "You are not allowed to request the api that much.",
             path: "",
             type: "field",
             value: "",

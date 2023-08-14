@@ -88,31 +88,29 @@ export async function login(
   };
 }
 
-
-export async function requiresAuthentication(req: NextApiRequest, res: NextApiResponse): Promise<string | null> {
-  console.log("in requiresAuthentication")
-  const auth = req.headers["authorization"]
-  console.log(req);
+export async function requiresAuthentication(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<string | null> {
+  const auth = req.headers["authorization"];
   if (auth && (auth as string).startsWith("Bearer ")) {
-    console.log("in if: " + auth)
-      try {
-          const jwtString = (auth as string).substring("Bearer ".length);
-          if (!jwtString) {
-              res.status(401).end;
-              // next("Verification failed");
-          }
-          const info = verifyJWT(jwtString);
-          return info.ip;
-          // next();
-      } catch (err) {
-          res.status(401).end();
-          // next(err)
+    try {
+      const jwtString = (auth as string).substring("Bearer ".length);
+      if (!jwtString) {
+        res.status(401).end;
+        // next("Verification failed");
       }
-  } else {
-      // not logged in
+      const info = verifyJWT(jwtString);
+      return info.ip;
+      // next();
+    } catch (err) {
       res.status(401).end();
-      // next("Verification failed");
+      // next(err)
+    }
+  } else {
+    // not logged in
+    res.status(401).end();
+    // next("Verification failed");
   }
   return null;
-
 }

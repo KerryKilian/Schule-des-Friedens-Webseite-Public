@@ -1,5 +1,6 @@
 import { ContactForm } from "@/src/Resources";
-import { checkIp } from "@/src/backend/services/Ip";
+import { checkBruteForce, checkIp } from "@/src/backend/services/Ip";
+import { logAction } from "@/src/backend/services/Logging";
 import { requiresAuthentication } from "@/src/backend/services/LoginService";
 import { body, validationResult } from "express-validator";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -12,6 +13,8 @@ export default async function handler(
   if (req.method !== "POST") {
     return res.status(405).end(); // Method Not Allowed
   }
+  const action = "send-email";
+  await logAction(req, action);
 
   // check if ip is banned
   const banned = await checkIp(req, res);
@@ -21,6 +24,21 @@ export default async function handler(
         {
           location: "request",
           msg: "You are banned from this api.",
+          path: "",
+          type: "field",
+          value: "",
+        },
+      ],
+    });
+  }
+
+  const bruteForce = await checkBruteForce(req, res, action);
+  if (bruteForce) {
+    return res.status(401).send({
+      errors: [
+        {
+          location: "request",
+          msg: "You are not allowed to request the api that much. Wait a few minutes",
           path: "",
           type: "field",
           value: "",
