@@ -9,7 +9,6 @@ export async function verifyPasswordAndCreateJWT(
   ip: string,
   password: string
 ): Promise<string | undefined> {
-  console.log(password);
 
   if (!ip || !password) {
     throw new Error("ip and password must be set");

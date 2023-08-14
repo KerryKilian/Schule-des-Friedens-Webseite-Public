@@ -4,6 +4,8 @@ import { verifyPasswordAndCreateJWT } from "@/src/backend/services/LoginService"
 import { NextApiRequest, NextApiResponse } from "next";
 
 async function login(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === "POST") {
+   
   const request = JSON.parse(req.body);
   const password = request.password;
   let ip;
@@ -42,6 +44,8 @@ async function login(req: NextApiRequest, res: NextApiResponse) {
     res.status(400).send({ error });
   }
   res.status(400);
+   
+}
 }
 
 export default login;
