@@ -14,7 +14,20 @@ export default async function handler(
   }
 
   // check if ip is banned
-  await checkIp(req, res);
+  const banned = await checkIp(req, res);
+  if (banned) {
+    return res.status(401).send({
+      errors: [
+        {
+          location: "request",
+          msg: "You are banned from this api.",
+          path: "",
+          type: "field",
+          value: "",
+        },
+      ],
+    });
+  }
 
   // validation
   await Promise.all([

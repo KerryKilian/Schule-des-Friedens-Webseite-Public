@@ -25,23 +25,25 @@ export const banIp = async (req: NextApiRequest) => {
   });
 };
 
-export const checkIp = async (req: NextApiRequest, res: NextApiResponse) => {
+/**
+ *
+ * @param req
+ * @param res
+ * @returns true if banned, false if not banned
+ */
+export const checkIp = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<boolean> => {
   const ip = (req.headers["x-forwarded-for"] ||
     req.connection.remoteAddress) as string;
   const q = query(collection(db, "bannedIp"), where("ip", "==", ip));
   const querySnapshot = await getDocs(q);
 
   if (!querySnapshot.empty) {
-    return res.status(401).send({
-      errors: [
-        {
-          location: "request",
-          msg: "You are banned from this api.",
-          path: "",
-          type: "field",
-          value: "",
-        },
-      ],
-    });
+    // ip is saved in database
+    return true;
   }
+  // ip is not saved in database
+  return false;
 };
