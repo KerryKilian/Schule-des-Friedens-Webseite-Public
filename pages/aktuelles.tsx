@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   try {
     let url: string;
     if (process.env.PRODUCTION === "TRUE") {
-      url = process.env.NEXT_PUBLIC_PRODUCTION_ADDRESS!;
+      url = process.env.NEXT_PUBLIC_PRODUCTION_ADDRESS! + "/api/news";
     } else {
       url = "http://localhost:3000/api/news";
     }
