@@ -3,7 +3,7 @@ import { logAction } from "@/src/backend/services/Logging";
 import { verifyPasswordAndCreateJWT } from "@/src/backend/services/LoginService";
 import { NextApiRequest, NextApiResponse } from "next";
 
-async function login(req: NextApiRequest, res: NextApiResponse) {
+export default async function login(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
    
   const request = JSON.parse(req.body);
@@ -36,16 +36,16 @@ async function login(req: NextApiRequest, res: NextApiResponse) {
         access_token: jwtTokenString,
         token_type: "Bearer",
       };
-      return res.status(200).send(loginResource);
+      // return res.status(200).send(loginResource);
     } else {
       res.status(401).end();
     }
   } catch (error) {
     res.status(400).send({ error });
   }
-  res.status(400);
+  res.status(400).end();
    
 }
 }
 
-export default login;
+

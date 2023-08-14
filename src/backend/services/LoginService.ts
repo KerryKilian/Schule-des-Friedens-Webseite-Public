@@ -73,7 +73,6 @@ export async function login(
     };
   }
 
-  // Password: schule@frieden-2023!
 
   if (password === `${process.env.PASSWORD}`) {
     return {
