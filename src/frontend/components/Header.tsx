@@ -33,6 +33,7 @@ export default function Header() {
         method: "POST",
         body: JSON.stringify({ password: password }),
       });
+      console.log(response);
       const result = await response.json();
       console.log(result);
       const jwt = result.jwtTokenString;
