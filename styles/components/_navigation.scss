@@ -58,8 +58,7 @@ a:-webkit-any-link {
   cursor: pointer;
 }
 
-
-@media (max-width: 600px) {
+@media (max-width: 1000px) {
   .isClosed.navigation {
     display: none;
   }
@@ -79,4 +78,3 @@ a:-webkit-any-link {
     justify-items: right;
   }
 }
-

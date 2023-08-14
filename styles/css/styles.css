@@ -191,7 +191,7 @@ a:-webkit-any-link {
   cursor: pointer;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 1000px) {
   .isClosed.navigation {
     display: none;
   }
@@ -443,6 +443,10 @@ input[type=file] {
 .login__description {
   margin: calc(var(--margin) * 2);
   color: var(--white-color);
+}
+
+.impressum {
+  margin: var(--margin);
 }
 
 .navigation__link {
