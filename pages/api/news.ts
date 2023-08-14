@@ -7,14 +7,17 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { body, validationResult } from "express-validator";
 import isURL from "is-url";
 import { requiresAuthentication } from "@/src/backend/services/LoginService";
+import { banIp, checkIp } from "@/src/backend/services/Ip";
 
 export default async function news(req: NextApiRequest, res: NextApiResponse) {
-  
   if (req.method === "POST") {
     const ip = await requiresAuthentication(req, res);
     if (ip == null && ip == "") {
       return;
     }
+    // check if ip is banned
+    await checkIp(req, res);
+
     // validation
     await Promise.all([
       body("title")
@@ -22,7 +25,13 @@ export default async function news(req: NextApiRequest, res: NextApiResponse) {
         .withMessage("Title is required.")
         .isLength({ max: 100, min: 5 })
         .withMessage("Title must have min 5 and max 100 characters.")
-        .custom((value) => !value.includes("<") && !value.includes(">"))
+        .custom((value) => {
+          if (value.includes("<") || value.includes(">")) {
+            banIp(req);
+            return false;
+          }
+          return true;
+        })
         .withMessage(
           "It seems you tried to insert harmful code. You are now banned from requesting this api."
         )
@@ -33,7 +42,13 @@ export default async function news(req: NextApiRequest, res: NextApiResponse) {
         .withMessage("Subtitle is required.")
         .isLength({ max: 100, min: 5 })
         .withMessage("Subtitle must have min 5 and max 100 characters.")
-        .custom((value) => !value.includes("<") && !value.includes(">"))
+        .custom((value) => {
+          if (value.includes("<") || value.includes(">")) {
+            banIp(req);
+            return false;
+          }
+          return true;
+        })
         .withMessage(
           "It seems you tried to insert harmful code. You are now banned from requesting this api."
         )
@@ -44,7 +59,13 @@ export default async function news(req: NextApiRequest, res: NextApiResponse) {
         .withMessage("AuthorName is required.")
         .isLength({ max: 100, min: 5 })
         .withMessage("AuthorName must have min 5 and max 100 characters.")
-        .custom((value) => !value.includes("<") && !value.includes(">"))
+        .custom((value) => {
+          if (value.includes("<") || value.includes(">")) {
+            banIp(req);
+            return false;
+          }
+          return true;
+        })
         .withMessage(
           "It seems you tried to insert harmful code. You are now banned from requesting this api."
         )
@@ -55,7 +76,13 @@ export default async function news(req: NextApiRequest, res: NextApiResponse) {
         .withMessage("Text is required.")
         .isLength({ max: 15000, min: 5 })
         .withMessage("Text must have at most 15000 characters.")
-        .custom((value) => !value.includes("<") && !value.includes(">"))
+        .custom((value) => {
+          if (value.includes("<") || value.includes(">")) {
+            banIp(req);
+            return false;
+          }
+          return true;
+        })
         .withMessage(
           "It seems you tried to insert harmful code. You are now banned from requesting this api."
         )
@@ -105,7 +132,13 @@ export default async function news(req: NextApiRequest, res: NextApiResponse) {
 
       // instead of just inserting data, I will insert the document id as a field (for searching)
       const newsRef = doc(collection(db, "news"));
-      await setDoc(newsRef, { ...news, id: newsRef.id, createdAt: new Date(), authorIp: req.headers['x-forwarded-for'] || req.connection.remoteAddress });
+      await setDoc(newsRef, {
+        ...news,
+        id: newsRef.id,
+        createdAt: new Date(),
+        authorIp:
+          req.headers["x-forwarded-for"] || req.connection.remoteAddress,
+      });
     } catch (errer: any) {
       return res.status(500).send({
         errors: [

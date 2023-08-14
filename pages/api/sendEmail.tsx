@@ -1,4 +1,5 @@
 import { ContactForm } from "@/src/Resources";
+import { checkIp } from "@/src/backend/services/Ip";
 import { requiresAuthentication } from "@/src/backend/services/LoginService";
 import { body, validationResult } from "express-validator";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -8,11 +9,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  
   if (req.method !== "POST") {
     return res.status(405).end(); // Method Not Allowed
   }
 
+  // check if ip is banned
+  await checkIp(req, res);
+
+  // validation
   await Promise.all([
     body("name")
       .exists()
@@ -53,58 +57,55 @@ export default async function handler(
         "It seems you tried to insert harmful code. You are now banned from requesting this api."
       )
       .run(req),
-    
   ]);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-
   let contact: ContactForm | null = null;
-    try {
-      contact = req.body as ContactForm;
-    } catch (error: any) {
-      return res.status(400).send({
-        errors: [
-          {
-            location: "body",
-            msg: "Wrong or missing information for resource 'ContactForm'",
-            path: "",
-            type: "field",
-            value: "",
-          },
-        ],
-      });
-    }
-
-    let transporter;
-    try {
-      transporter = nodemailer.createTransport({
-        host: "smtp.web.de",
-        port: 587,
-        secure: false,
-        auth: {
-          user: process.env.NEXT_PUBLIC_EMAIL_ADDRESS,
-          pass: process.env.NEXT_PUBLIC_EMAIL_PASSWORD,
+  try {
+    contact = req.body as ContactForm;
+  } catch (error: any) {
+    return res.status(400).send({
+      errors: [
+        {
+          location: "body",
+          msg: "Wrong or missing information for resource 'ContactForm'",
+          path: "",
+          type: "field",
+          value: "",
         },
-      });
-    } catch (error) {
-      return res.status(500).send({
-        errors: [
-          {
-            location: "body",
-            msg: "Failed to establish an email connection.",
-            path: "",
-            type: "field",
-            value: "",
-          },
-        ],
-      });
-    }
-    
+      ],
+    });
+  }
 
-    // send first email to receiver of organization
+  let transporter;
+  try {
+    transporter = nodemailer.createTransport({
+      host: "smtp.web.de",
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.NEXT_PUBLIC_EMAIL_ADDRESS,
+        pass: process.env.NEXT_PUBLIC_EMAIL_PASSWORD,
+      },
+    });
+  } catch (error) {
+    return res.status(500).send({
+      errors: [
+        {
+          location: "body",
+          msg: "Failed to establish an email connection.",
+          path: "",
+          type: "field",
+          value: "",
+        },
+      ],
+    });
+  }
+
+  // send first email to receiver of organization
   try {
     const mailOptionsToReceiver = {
       from: process.env.NEXT_PUBLIC_EMAIL_ADDRESS,
@@ -114,7 +115,6 @@ export default async function handler(
     };
 
     await transporter.sendMail(mailOptionsToReceiver);
-
   } catch (error) {
     return res.status(500).send({
       errors: [
@@ -128,7 +128,6 @@ export default async function handler(
       ],
     });
   }
-
 
   // send second email as confirmation to sender
   try {
@@ -156,8 +155,6 @@ export default async function handler(
       ],
     });
   }
-    
 
-    return res.status(200).json({ message: "Email sent successfully" });
-  
+  return res.status(200).json({ message: "Email sent successfully" });
 }

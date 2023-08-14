@@ -47,12 +47,12 @@ export default function AddNews() {
 
     setLoading(true);
     const headers: any = {
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    };
     const jwt = retrieveJWT();
-    
+
     if (jwt) {
-        headers.Authorization = `Bearer ${jwt}`;
+      headers.Authorization = `Bearer ${jwt}`;
     }
     try {
       const response = await fetch("/api/news", {
@@ -70,7 +70,7 @@ export default function AddNews() {
     } catch (error) {
       setSuccessMessage("Ein Fehler ist aufgetreten: " + error);
     }
-    setLoading(false)
+    setLoading(false);
   }
 
   /**
@@ -214,16 +214,23 @@ export default function AddNews() {
           size={150}
           aria-label="Loading Spinner"
           data-testid="loader"
-      />
+        />
         <small>{successMessage}</small>
-        {errors?.errors.map((error) => (
+        {errors?.errors.map((error, index) => (
           <>
             <br />
-            <small>{error.msg}</small>
+            <small key={index}>{error.msg}</small>
           </>
         ))}
       </form>
-      <button onClick={(e) => {console.log(news); console.log("jwt: " + retrieveJWT());}}>Klick mihc</button>
+      <button
+        onClick={(e) => {
+          console.log(news);
+          console.log("jwt: " + retrieveJWT());
+        }}
+      >
+        Klick mihc
+      </button>
     </>
   );
 }

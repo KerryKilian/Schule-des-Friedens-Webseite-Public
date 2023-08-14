@@ -1,7 +1,3 @@
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { db } from "../../firebase";
-import { collection, getDoc, getDocs, query, where } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { NewsResource } from "@/src/Resources";
 import { formatDate } from "@/src/utils/utils";
