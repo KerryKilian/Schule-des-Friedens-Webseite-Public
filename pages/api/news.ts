@@ -1,8 +1,6 @@
 import { db } from "@/firebase";
 import { NewsResource } from "@/src/Resources";
 import { addDoc, collection, doc, getDocs, setDoc } from "firebase/firestore";
-import { MongoClient } from "mongodb";
-import multer from "multer";
 import { NextApiRequest, NextApiResponse } from "next";
 import { body, validationResult } from "express-validator";
 import isURL from "is-url";

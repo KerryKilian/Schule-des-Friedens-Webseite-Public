@@ -1,7 +1,6 @@
 import { ContactForm } from "@/src/Resources";
 import { checkBruteForce, checkIp } from "@/src/backend/services/Ip";
 import { logAction } from "@/src/backend/services/Logging";
-import { requiresAuthentication } from "@/src/backend/services/LoginService";
 import { body, validationResult } from "express-validator";
 import { NextApiRequest, NextApiResponse } from "next";
 import nodemailer from "nodemailer";
