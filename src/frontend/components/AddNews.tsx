@@ -223,14 +223,7 @@ export default function AddNews() {
           </>
         ))}
       </form>
-      <button
-        onClick={(e) => {
-          console.log(news);
-          console.log("jwt: " + retrieveJWT());
-        }}
-      >
-        Klick mihc
-      </button>
+      
     </>
   );
 }
