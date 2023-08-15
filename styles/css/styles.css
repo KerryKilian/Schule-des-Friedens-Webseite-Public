@@ -449,6 +449,31 @@ input[type=file] {
   margin: var(--margin);
 }
 
+.news {
+  margin: var(--margin);
+}
+
+.news__slidercontainer {
+  width: 100%;
+  height: 100%;
+}
+
+.news__namedate {
+  font-style: italic;
+}
+
+.news__slider {
+  margin: var(--margin);
+  height: 40em;
+}
+
+.news__slideimage {
+  width: 90%;
+  max-height: 90%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
 .navigation__link {
   background-color: var(--secondary-color);
   color: var(--white-color);
