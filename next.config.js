@@ -17,7 +17,11 @@ module.exports = {
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
   },
-  
+  serverOptions: {
+    // Enable HTTPS by providing key and certificate
+    key: 'certificates/key.pem', 
+    cert: 'certificates/certificate.pem', 
+  },
 };
 
 module.exports = nextConfig
